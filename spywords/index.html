@@ -764,6 +764,7 @@ function renderGame(){
     return b;
   });
   board.replaceChildren(...cards);
+  fitWords(cards);
   freshCard = -1;
   /* controls */
   $("#clueForm").hidden = !canClue();
@@ -782,6 +783,17 @@ function renderGame(){
     for(const p of h.picks){ const x = document.createElement("span"); x.className = "pick c-" + p.c; x.textContent = game.words[p.i]; li.append(x); }
     return li;
   }));
+}
+/* the length classes get most words right; wide letters (W, M, G) on narrow phones can still spill, so measure and shrink */
+function fitWords(cards){
+  for(const b of cards){
+    const sp = b.firstChild;
+    if(sp.scrollWidth <= sp.clientWidth + 1) continue;
+    b.style.fontStretch = "75%";
+    if(sp.scrollWidth <= sp.clientWidth + 1) continue;
+    const fs = parseFloat(getComputedStyle(b).fontSize);
+    b.style.fontSize = Math.max(7, fs * sp.clientWidth / sp.scrollWidth * .96) + "px";
+  }
 }
 const colorName = c => ({ r:"red", b:"blue", n:"nobody's", a:"the assassin" })[c] || "";
 
